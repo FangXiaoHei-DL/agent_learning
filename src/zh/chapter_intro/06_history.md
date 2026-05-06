@@ -28,20 +28,17 @@
 
 - **STRIPS（1971）**[4]：SRI International 开发的自动化规划系统，为机器人 Shakey 提供行动规划能力。STRIPS 提出的"前置条件-动作-效果"规划范式，至今仍是 AI 规划领域的基础框架。
 
-```
-# STRIPS 规划表示示例（伪代码）
-# 这种"条件-动作-效果"的思路在今天的 Agent 工具调用中依然可见
+STRIPS 的核心思想可以不用代码理解：每个动作都由三部分组成——**前置条件**、**动作本身**和**执行后的效果**。
 
-Action: move_block(block, from, to)
-  Preconditions: 
-    - on(block, from)        # 方块在源位置上
-    - clear(block)           # 方块顶部没有其他方块
-    - clear(to)              # 目标位置是空的
-  Effects:
-    - on(block, to)          # 方块移到目标位置
-    - clear(from)            # 源位置变空
-    - NOT on(block, from)    # 方块不再在源位置
-```
+以“移动积木”为例：
+
+| 部分 | 含义 | 示例 |
+|---|---|---|
+| 前置条件 | 动作发生前必须满足什么 | 积木是空闲的，目标位置是空闲的 |
+| 动作 | 系统实际执行什么 | 把积木从 A 移到 B |
+| 效果 | 执行后世界状态如何变化 | 积木位于 B，A 变为空闲 |
+
+这种“条件—动作—效果”的表达方式，正是今天 Agent 工具调用和任务规划的早期思想来源。
 
 ### 符号主义的局限
 
@@ -70,43 +67,16 @@ Action: move_block(block, from, to)
 - 复杂的智能行为由这些小 Agent 的层级协作**涌现**出来
 - 不同的小 Agent 之间会竞争和合作
 
-```python
-# 心智社会的思想在今天的多 Agent 系统中得到了完美体现
-# 以下是一个简化的概念演示
+“心智社会”的重点不在于某个复杂类如何实现，而在于：**智能可以由许多能力有限的小模块协作涌现出来**。
 
-class SimpleAgent:
-    """一个只擅长单一任务的简单 Agent"""
-    def __init__(self, name: str, specialty: str):
-        self.name = name
-        self.specialty = specialty
-    
-    def can_handle(self, task: str) -> bool:
-        return self.specialty in task.lower()
-    
-    def handle(self, task: str) -> str:
-        return f"[{self.name}] 正在处理与 {self.specialty} 相关的任务..."
+| 小 Agent | 擅长的事 | 协作价值 |
+|---|---|---|
+| 语言理解者 | 解析用户意图 | 把自然语言转成任务目标 |
+| 规划者 | 拆解步骤 | 决定先做什么、后做什么 |
+| 执行者 | 调用工具 | 把计划落实到外部动作 |
+| 评估者 | 检查结果 | 判断是否需要重试或修正 |
 
-class SocietyOfMind:
-    """心智社会：多个简单 Agent 的协作"""
-    def __init__(self):
-        self.agents = [
-            SimpleAgent("搜索者", "搜索"),
-            SimpleAgent("分析师", "分析"),
-            SimpleAgent("写手", "撰写"),
-            SimpleAgent("审核员", "检查"),
-        ]
-    
-    def solve(self, task: str) -> list[str]:
-        """将任务分发给能处理的 Agent"""
-        results = []
-        for agent in self.agents:
-            if agent.can_handle(task):
-                results.append(agent.handle(task))
-        return results
-
-# 当你在 CrewAI 或 AutoGen 中定义多个角色时，
-# 本质上就是在实践明斯基的"心智社会"理论
-```
+现代多 Agent 系统仍然沿用这一思想：单个模块不必全能，只要接口清晰、反馈闭环可靠，整体就能表现出复杂智能。
 
 ### BDI 架构
 
@@ -116,44 +86,15 @@ class SocietyOfMind:
 - **Desire（愿望）**：Agent 想要达成的目标（"我想在 30 分钟内到达公司"）
 - **Intention（意图）**：Agent 决定采取的行动计划（"我选择坐地铁而不是开车"）
 
-```python
-from dataclasses import dataclass, field
+BDI 架构可以理解为三个层次：
 
-@dataclass
-class BDIAgent:
-    """BDI 架构的 Agent（概念演示）"""
-    
-    # Belief: Agent 对世界的认知
-    beliefs: dict = field(default_factory=lambda: {
-        "traffic": "congested",    # 交通拥堵
-        "weather": "rainy",        # 下雨
-        "time": "08:30",           # 当前时间
-        "has_umbrella": True,      # 有伞
-    })
-    
-    # Desire: Agent 想要达成的目标
-    desires: list = field(default_factory=lambda: [
-        "到达公司",
-        "不要迟到",
-        "不要被淋湿",
-    ])
-    
-    # Intention: Agent 选择的行动计划
-    intentions: list = field(default_factory=list)
-    
-    def deliberate(self):
-        """基于信念和愿望，形成意图（决策过程）"""
-        if self.beliefs["traffic"] == "congested":
-            self.intentions.append("选择地铁出行")
-        if self.beliefs["weather"] == "rainy" and self.beliefs["has_umbrella"]:
-            self.intentions.append("带上雨伞")
-        return self.intentions
+| 层次 | 含义 | 在现代 Agent 中的对应物 |
+|---|---|---|
+| Belief（信念） | Agent 当前认为世界是什么样 | 观察结果、上下文、记忆 |
+| Desire（愿望） | Agent 想达成什么目标 | 用户任务、系统目标、奖励信号 |
+| Intention（意图） | Agent 当前承诺执行的计划 | 任务分解、工具调用序列 |
 
-# BDI 的思想在今天的 Agent 中体现为：
-# - Belief → Agent 的上下文/记忆（工具返回值、对话历史）
-# - Desire → 用户的任务目标（System Prompt 中的任务描述）
-# - Intention → Agent 的规划结果（ReAct 中的 Thought 部分）
-```
+它提供了一种非常直观的 Agent 心智模型：先看见世界，再确定目标，最后选择并坚持一条行动路径。
 
 > 💡 **BDI 与 ReAct 的联系**：如果你对比 BDI 架构和 ReAct 框架 [7]，会发现惊人的相似性——ReAct 中的 Thought 对应 BDI 的 Belief + 推理过程，Action 对应 Intention 的执行，Observation 对应 Belief 的更新。ReAct 本质上是用 LLM 实现了 BDI 架构中的"审慎推理"过程。
 
@@ -173,38 +114,15 @@ class BDIAgent:
 
 深度强化学习（Deep RL）为 Agent 领域带来了一套系统的数学框架。Agent 被建模为在环境中采取行动以最大化累计奖励的实体 [10]：
 
-```python
-# 强化学习中的 Agent-环境交互循环
-# 这个循环在 LLM Agent 中依然是核心模式
+强化学习 Agent 的交互循环可以概括为：
 
-class RLAgentLoop:
-    """
-    强化学习的 Agent 循环：
-    State → Action → Reward → New State → ...
-    
-    对比 LLM Agent 循环：
-    Observation → Thought → Tool Call → Result → ...
-    """
-    
-    def __init__(self, environment, policy):
-        self.env = environment    # 环境
-        self.policy = policy      # 策略（RL 中是神经网络，LLM Agent 中是 LLM）
-    
-    def run_episode(self, max_steps: int = 100):
-        state = self.env.reset()               # 初始状态
-        total_reward = 0
-        
-        for step in range(max_steps):
-            action = self.policy(state)        # 根据策略选择动作
-            next_state, reward, done = self.env.step(action)  # 执行并观察
-            total_reward += reward
-            
-            if done:
-                break
-            state = next_state
-        
-        return total_reward
-```
+1. Agent 观察环境状态。
+2. 根据策略选择一个动作。
+3. 环境返回新状态和奖励。
+4. Agent 根据奖励更新策略。
+5. 重复以上步骤，直到任务结束。
+
+LLM Agent 虽然通常不在每次运行时更新模型权重，但仍然继承了这个闭环思想：把工具返回、错误信息和用户反馈作为“环境奖励”，再通过上下文记忆影响下一步决策。
 
 > 💡 **RL 到 LLM Agent 的传承**：强化学习的 Agent 循环（State→Action→Reward→NewState）直接映射到今天 LLM Agent 的工作循环（Observation→Thought→Action→Result）。唯一的区别是：RL Agent 的策略由数值化的神经网络驱动，而 LLM Agent 的策略由自然语言推理驱动。
 

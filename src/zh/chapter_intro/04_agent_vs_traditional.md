@@ -23,67 +23,31 @@
 
 ### ❌ 传统程序的做法：脆弱的“玻璃管道”
 
-```python
-"""
-传统架构：强耦合的 Pipeline
-特点：高度确定，但对任何环境变化（如上游表结构改变）毫无抵抗力
-"""
-import pandas as pd
+传统程序在这个任务中通常会采用固定流水线：读取 CSV、按预设列名过滤、按预设指标排序并输出结果。只要上游报表结构稳定，这种方式非常高效。
 
-def analyze_ads_report_traditional(file_path: str) -> dict:
-    try:
-        # 1. 强依赖固定的文件格式和路径
-        df = pd.read_csv(file_path)
-        
-        # 2. 强依赖硬编码的列名（Schema 强耦合）
-        # 如果上游把 "cost" 改成了 "spend"，程序立刻崩溃 (KeyError)
-        valid_df = df[(df["cost"] > 1000) & (df["status"] == "active")]
-        
-        # 3. 强依赖固定的计算逻辑
-        top_strategy = valid_df.loc[valid_df["pCVR"].idxmax()]
-        
-        return {"strategy": top_strategy["strategy_id"], "cvr": top_strategy["pCVR"]}
-        
-    except KeyError as e:
-        # 发生预期外的错误，系统只能选择“优雅地死亡”，无法自救
-        return {"error": f"Missing expected column: {e}"}
-```
+但它的脆弱点也很明确：
+
+| 假设 | 一旦变化会发生什么 |
+|---|---|
+| 列名一定叫 `cost` | 如果改成 `spend_usd`，过滤逻辑会失败 |
+| 转化率字段一定叫 `pCVR` | 如果改成 `conversion_rate`，排序逻辑会失败 |
+| 状态字段一定是布尔值 | 如果变成 `Y/N` 字符串，条件判断会失效 |
+| 文件格式一直不变 | 如果多了表头说明或缺失值，清洗逻辑可能崩溃 |
+
+传统程序的优势是确定、快速、可复现；劣势是面对未知变化时很难自救。
 
 ### ✅ Agent 的做法：具备自愈能力的动态执行
 
-```python
-"""
-Agent 架构：动态生成与自我修正
-特点：理解语义，动态编写代码，遇到 Schema 变更能够自主修复
-"""
+Agent 的处理方式更像一个会探索的分析师。它不会假设所有字段都固定，而是先观察数据结构，再根据目标动态生成分析路径。
 
-def analyze_ads_report_agent(file_path: str, context: AgentContext):
-    """
-    Agent 并不预设列名，而是通过 PTA (感知-思考-行动) 循环来解决问题
-    """
-    # 🔄 [Loop 1]: 感知数据结构
-    # 🧠 Thought: 我需要先弄清楚这个 CSV 的表结构 (Schema) 是什么。
-    # 🦾 Action: execute_python("import pandas as pd; print(pd.read_csv('report.csv', nrows=0).columns)")
-    # 📊 Observation: Index(['strategy_id', 'spend_usd', 'conversion_rate', 'is_active'], dtype='object')
-    
-    # 🔄 [Loop 2]: 语义对齐与代码生成
-    # 🧠 Thought: 上游表结构变了。"cost" 变成了 "spend_usd"，"pCVR" 变成了 "conversion_rate"。
-    #             我需要根据新的 Schema 编写分析代码，找出转化率最高且消耗大于1000的策略。
-    # 🦾 Action: execute_python("""
-    #     df = pd.read_csv('report.csv')
-    #     valid = df[(df['spend_usd'] > 1000) & (df['is_active'] == True)]
-    #     print(valid.loc[valid['conversion_rate'].idxmax()]['strategy_id'])
-    # """)
-    # 📊 Observation: Error: 'is_active' is of type string ('Y'/'N'), cannot compare to True.
-    
-    # 🔄 [Loop 3]: 异常捕获与自我反思 (Self-Correction)
-    # 🧠 Thought: 代码报错了。'is_active' 是字符串类型，我应该用 == 'Y' 来过滤。我将重写代码。
-    # 🦾 Action: execute_python("... df['is_active'] == 'Y' ...")
-    # 📊 Observation: "STRATEGY_9527"
-    
-    # ✅ 任务完成，成功绕过 Schema 变更和数据类型异常
-    return "分析完成，转化率最高的目标策略组为 STRATEGY_9527。"
-```
+| 循环 | Agent 的行为 | 价值 |
+|---|---|---|
+| 第 1 轮 | 读取表头，确认当前 CSV 有哪些字段 | 先感知环境，而不是直接套用旧规则 |
+| 第 2 轮 | 将 `spend_usd` 对齐为“消耗”，将 `conversion_rate` 对齐为“转化率” | 进行语义匹配 |
+| 第 3 轮 | 发现 `is_active` 是 `Y/N` 字符串后修正过滤条件 | 根据错误反馈自我修正 |
+| 第 4 轮 | 输出转化率最高且消耗达标的策略组 | 完成原始目标 |
+
+这就是 Agent 的反脆弱性：它把异常当成新的观察结果，而不是任务终点。
 
 ---
 

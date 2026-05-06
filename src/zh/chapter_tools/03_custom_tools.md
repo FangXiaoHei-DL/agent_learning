@@ -22,23 +22,15 @@
 
 这不是软件工程教条——它对 Agent 有直接的量化影响。
 
-```python
-# ❌ 瑞士军刀式工具：模型会困惑"我到底该传什么参数？"
-def search_analyze_summarize(
-    query: str,
-    analyze: bool = True,    # 要分析吗？
-    summarize: bool = True,   # 要总结吗？
-    format: str = "text",     # 什么格式？
-    max_results: int = 10,    # 多少结果？
-): ...
-# 结果：LLM 经常漏填参数或传错值
+一个“瑞士军刀式工具”通常会把搜索、分析、摘要、格式转换等能力塞进同一个入口里。结果是模型每次调用时都要同时判断：要不要分析、要不要摘要、返回什么格式、取多少结果、参数之间是否互斥。**决策空间越大，模型越容易漏填参数或传错值。**
 
-# ✅ 职责清晰的独立工具：模型自由组合
-def search_web(query: str) -> list: ...     # 只搜索
-def analyze_data(data: list) -> dict: ...   # 只分析
-def summarize_text(text: str) -> str: ...   # 只摘要
-# 结果：LLM 可以根据任务灵活选择和组合
-```
+更好的方式是拆成多个职责清晰的小工具：
+
+| 工具 | 只负责什么 | 为什么更适合 Agent |
+|---|---|---|
+| `search_web` | 搜索网页并返回候选结果 | 模型只需要判断“是否需要搜索” |
+| `analyze_data` | 对已有数据做分析 | 输入输出边界清晰 |
+| `summarize_text` | 对文本做摘要 | 不会和搜索、分析逻辑混在一起 |
 
 **为什么这很重要？** 因为 LLM 选择工具时是在做多分类问题。每增加一个可选参数或功能分支，决策空间就指数级膨胀。3 个单职责工具的组合空间是 $2^3 = 8$ 种用法；而 1 个多功能工具的参数组合可能达到几十种，模型更容易出错。
 
@@ -67,53 +59,29 @@ def summarize_text(text: str) -> str: ...   # 只摘要
 
 LLM 生成的参数不总是合法的。它可能传入：
 
-```python
-# 这些都是真实会发生的情况
-""                    # 空字符串
-"user@example"        # 格式不完整的邮箱
-"A" * 10000           # 超长文本导致内存问题
-None                  # 缺失必需参数
-{"nested": "object"}  # 期望字符串但传了对象
-```
+| 异常输入 | 典型问题 | 工具应该怎么处理 |
+|---|---|---|
+| 空字符串 | 用户没有提供必要信息 | 返回“缺少必填字段”，提示需要补充什么 |
+| 不完整邮箱，如 `user@example` | 格式不符合预期 | 返回期望格式，如 `user@example.com` |
+| 超长文本 | 可能导致超时、内存问题或费用暴涨 | 设置长度上限，并说明如何缩短 |
+| 缺失必需参数 | 模型漏填字段 | 返回字段名和补充建议 |
+| 类型错误 | 期望字符串却传了对象 | 返回期望类型和实际类型 |
 
 ### 最小可行的输入验证模式
 
-```python
-from pydantic import BaseModel, field_validator
+不需要一上来写复杂框架，先建立这个原则：**工具入口必须先验证，再执行。** 一个可靠的工具至少要完成四件事：
 
-class EmailInput(BaseModel):
-    to: str
-    subject: str
-    body: str
+1. **类型检查**：参数是不是期望的类型。
+2. **格式检查**：邮箱、日期、URL、股票代码等是否符合格式。
+3. **范围检查**：数量、时间跨度、文本长度是否超过安全范围。
+4. **错误转译**：把底层异常转成人和模型都能理解的提示。
 
-    @field_validator("to")
-    @classmethod
-    def check_email(cls, v: str) -> str:
-        if "@" not in v or "." not in v.split("@")[-1]:
-            raise ValueError(f"无效的邮箱地址：{v}")
-        return v
+如果使用 Python，后续实战中可以用 Pydantic、dataclass 或框架自带 Schema 来完成这些校验；如果使用 TypeScript，也可以用 Zod 等工具。这里先记住目标：**不要相信模型传来的参数一定正确。**
 
-    @field_validator("subject")
-    @classmethod
-    def check_length(cls, v: str) -> str:
-        if len(v) > 200:
-            raise ValueError("主题超过200字限制")
-        return v
-
-def send_email_safe(to: str, subject: str, body: str) -> str:
-    try:
-        # Pydantic 自动完成所有验证
-        email_input = EmailInput(to=to, subject=subject, body=body)
-        return f"✅ 邮件已发送至 {email_input.to}"
-    except Exception as e:
-        # 关键：返回人类可读的错误，不要抛异常！
-        return f"❌ 发送失败：{e}"
-```
-
-**为什么用 Pydantic 而非手写 if-else？**
-- 类型声明即验证规则，代码即文档
-- 错误信息自动包含字段名和原因
-- 与 OpenAI Structured Outputs 天然配合
+**为什么推荐 Schema 校验而不是到处手写判断？**
+- 类型声明即验证规则，文档和校验更容易保持一致
+- 错误信息可以自动包含字段名和原因
+- 与 Structured Outputs、Function Calling 等机制天然配合
 
 ---
 
@@ -121,18 +89,11 @@ def send_email_safe(to: str, subject: str, body: str) -> str:
 
 这是最容易被忽略的原则：
 
-```python
-# ❌ 这种错误信息对人类友好，但对 LLM 几乎无用
-raise ValueError("Invalid input")
-
-# ✅ 这种错误信息让 LLM 能理解并采取行动
-return json.dumps({
-    "error": "邮箱地址格式不正确",
-    "expected": "如 user@example.com",
-    "received": "user@example",  # 告诉 LLM 它传了什么
-    "suggestion": "请检查邮箱地址是否包含 @ 和域名后缀"
-})
-```
+| 错误信息 | LLM 能否自我修正 | 原因 |
+|---|---|---|
+| `Invalid input` | 很难 | 不知道哪个字段错了，也不知道应该怎么改 |
+| “邮箱地址格式不正确，期望如 `user@example.com`，收到 `user@example`” | 容易 | 模型知道错误字段、期望格式和当前值 |
+| “搜索超时，请缩短关键词或稍后重试” | 容易 | 模型可以换关键词、减少范围或告知用户 |
 
 好的错误信息能让 LLM 自行纠错：
 - 参数格式错 → LLM 修正格式重试
@@ -179,48 +140,22 @@ Agent 在一次推理中可能多次调用同一个工具：
 <details>
 <summary>参考方案</summary>
 
-```python
-{
-    "type": "function",
-    "function": {
-        "name": "get_stock_info",
-        "description": """查询股票的实时行情数据。
-适合用于：
-- 获取股票当前价格和涨跌幅
-- 查询公司市值等基本面指标
-不适合用于：
-- K线图/历史数据（请使用 get_stock_history）
-- 技术指标计算（请在获取数据后自行计算）
+一个合格的股票查询工具 Schema 应该包含这些要素：
 
-返回格式：{symbol, price, change_percent, market_cap, currency}""",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "symbol": {
-                    "type": "string",
-                    "description": """股票代码格式：
-- 美股：AAPL, GOOGL, TSLA（纯大写字母）
-- A股：600036.SS（上海）, 000001.SZ（深圳）
-- 港股：0700.HK"""
-                },
-                "metrics": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "enum": ["price", "change_percent", "market_cap", "pe", "pb"]
-                    },
-                    "description": "要查询的指标，默认全部"
-                }
-            },
-            "required": ["symbol"]
-        }
-    }
-}
-```
+| 字段 | 建议设计 | 作用 |
+|---|---|---|
+| 工具名 | `get_stock_info` | 名称明确，模型容易选择 |
+| 功能说明 | 查询股票实时行情数据 | 告诉模型这个工具能做什么 |
+| 适用场景 | 当前价格、涨跌幅、市值等实时指标 | 帮助模型判断何时调用 |
+| 不适用场景 | 历史 K 线、技术指标计算、投资建议 | 避免模型把所有股票问题都丢给它 |
+| `symbol` 参数 | 字符串，支持 `AAPL`、`600036.SS`、`000001.SZ`、`0700.HK` | 明确不同市场代码格式 |
+| `metrics` 参数 | 可选列表，如价格、涨跌幅、市值、市盈率 | 限制可查询指标，减少幻觉 |
+| 返回格式 | `symbol`、`price`、`change_percent`、`market_cap`、`currency` | 让模型知道如何解读结果 |
+
 关键点：
 1. description 中明确区分了适用和不适用场景
-2. symbol 的描述包含了三种市场的代码格式示例
-3. metrics 用 enum 限制了可选值范围，减少模型幻觉
+2. symbol 的描述包含了不同市场的代码格式示例
+3. metrics 用固定枚举限制可选值范围，减少模型幻觉
 
 </details>
 

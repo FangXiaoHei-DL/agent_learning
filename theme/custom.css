@@ -178,6 +178,71 @@ html:not(.sidebar-visible) .content main {
   border-radius: 4px;
 }
 
+/* 左侧目录折叠 */
+.sidebar .chapter li.sidebar-collapsible {
+  position: relative;
+}
+
+.sidebar .chapter li.sidebar-collapsible > a {
+  padding-left: 2.35em;
+}
+
+.sidebar .chapter li.sidebar-collapsible .sidebar-collapse-toggle {
+  position: absolute;
+  left: 0.55em;
+  top: 0.32em;
+  width: 1.35em;
+  height: 1.35em;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  opacity: 0.62;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.2s ease;
+  z-index: 2;
+}
+
+.sidebar .chapter li.sidebar-collapsible .sidebar-collapse-toggle:hover {
+  opacity: 1;
+  color: var(--links, #3783eb);
+  background: rgba(var(--links-rgb, 55, 131, 235), 0.1);
+}
+
+.sidebar .chapter li.sidebar-collapsible .sidebar-collapse-toggle svg {
+  transition: transform 0.2s ease;
+}
+
+.sidebar .chapter li.sidebar-collapsible.sidebar-item-collapsed .sidebar-collapse-toggle svg {
+  transform: rotate(-90deg);
+}
+
+.sidebar .chapter li.sidebar-collapsible > ol.section,
+.sidebar .chapter li.sidebar-collapsible > ul.section,
+.sidebar .chapter li.sidebar-section-wrapper > ol.section,
+.sidebar .chapter li.sidebar-section-wrapper > ul.section {
+  overflow: hidden;
+  transition: max-height 0.22s ease, opacity 0.18s ease;
+}
+
+.sidebar .chapter li.sidebar-collapsible.sidebar-item-collapsed > ol.section,
+.sidebar .chapter li.sidebar-collapsible.sidebar-item-collapsed > ul.section,
+.sidebar .chapter li.sidebar-section-wrapper.sidebar-section-collapsed > ol.section,
+.sidebar .chapter li.sidebar-section-wrapper.sidebar-section-collapsed > ul.section {
+  display: none;
+}
+
+.navy .sidebar .chapter li.sidebar-collapsible .sidebar-collapse-toggle:hover,
+.coal .sidebar .chapter li.sidebar-collapsible .sidebar-collapse-toggle:hover,
+.ayu .sidebar .chapter li.sidebar-collapsible .sidebar-collapse-toggle:hover {
+  color: #5ba3f5;
+  background: rgba(91, 163, 245, 0.12);
+}
+
 /* 分篇标题样式（SUMMARY 中的 --- 分隔符） */
 .sidebar .chapter li.part-title {
   font-size: 0.95em;

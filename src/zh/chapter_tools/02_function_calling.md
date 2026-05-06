@@ -32,98 +32,51 @@
 
 ---
 
-## 最小可运行代码
+## 机制优先：先理解，不急着写完整代码
 
-下面是一个**最精简但完整**的 Function Calling 示例。读懂它，你就懂了整个机制的核心：
+Function Calling 的核心不是某段 Python，而是一次**由模型发起、由程序执行、再把结果交还给模型**的消息往返。初学者可以先把它理解为下面这个分工流程：
 
-```python
-import json
-from openai import OpenAI
+| 步骤 | 谁负责 | 发生了什么 | 读者需要抓住的重点 |
+|---|---|---|---|
+| 1. 定义工具 | 开发者 | 告诉模型有哪些工具、每个工具需要什么参数 | 工具定义是"说明书"，不是函数实现 |
+| 2. 用户提问 | 用户 | 提出一个可能需要外部能力的问题 | 模型先判断是否需要工具 |
+| 3. 生成调用意图 | LLM | 输出"我要调用哪个工具，以及参数是什么" | 模型只生成指令，不亲自执行 |
+| 4. 执行工具 | 你的程序 | 调用真实函数、API 或数据库 | 这里才发生真实世界的动作 |
+| 5. 返回结果 | 你的程序 → LLM | 把工具结果放回对话历史 | 模型基于结果组织最终回答 |
 
-client = OpenAI()
+以"北京和上海天气怎么样？"为例，模型不会自己查天气。它会先生成两个查询意图：一个查北京，一个查上海；程序执行查询后，把两个城市的结果交回模型；模型再用自然语言总结给用户。
 
-# ① 定义工具函数（真实的执行逻辑）
-def get_weather(city: str) -> dict:
-    """查询城市天气"""
-    # 实际项目中这里调用真实 API
-    mock_data = {"北京": "15°C, 晴", "上海": "18°C, 多云", "广州": "25°C, 小雨"}
-    return {"city": city, "weather": mock_data.get(city, "未知")}
+### 三个关键对象
 
-# ② 定义工具 Schema（告诉 LLM 怎么用这个工具）
-# ⚠️ 这是最关键的部分！description 写得好不好，
-#    直接决定了 LLM 能不能正确使用工具
-tools = [{
-    "type": "function",
-    "function": {
-        "name": "get_weather",
-        "description": "获取指定城市的当前天气",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "city": {
-                    "type": "string",
-                    "description": "城市名，如 北京/上海/广州"
-                }
-            },
-            "required": ["city"]
-        }
-    }
-}]
+| 对象 | 可以用一句话理解为 | 常见内容 |
+|---|---|---|
+| 工具函数 | 真正干活的"手" | 查天气、搜网页、读数据库、发邮件 |
+| 工具 Schema | 写给模型看的"说明书" | 工具名、用途、参数、必填字段 |
+| Agent 循环 | 让模型和工具反复协作的"调度器" | 判断是否继续调用工具，或是否结束回答 |
 
-# ③ Agent 主循环
-def run_agent(user_message):
-    messages = [{"role": "user", "content": user_message}]
+### 一次调用的消息形态
 
-    while True:
-        response = client.chat.completions.create(
-            model="gpt-4.1",
-            messages=messages,
-            tools=tools,
-            tool_choice="auto"  # 让模型自己决定是否用工具
-        )
+不必急着看完整 SDK 代码，先看消息在系统里的形态：
 
-        msg = response.choices[0].message
-        messages.append(msg)  # 把模型回复加入历史
+| 阶段 | 消息含义 | 示例 |
+|---|---|---|
+| 用户输入 | 用户提出目标 | "北京和上海的天气怎么样？" |
+| 模型输出 | 模型请求工具 | 调用 `get_weather`，参数分别是 `北京`、`上海` |
+| 工具结果 | 程序返回观察结果 | 北京晴，上海多云 |
+| 最终回答 | 模型整合结果 | "北京今天晴，上海多云……" |
 
-        # 分支A：模型直接回答（finish_reason = "stop"）
-        if response.choices[0].finish_reason == "stop":
-            print(f"\n🤖 {msg.content}")
-            return msg.content
+### 伪流程
 
-        # 分支B：模型要求调用工具（finish_reason = "tool_calls"）
-        for tool_call in (msg.tool_calls or []):
-            func_name = tool_call.function.name
-            func_args = json.loads(tool_call.function.arguments)
+1. 收到用户问题。
+2. 把用户问题和工具说明一起发给模型。
+3. 如果模型选择直接回答，就结束。
+4. 如果模型请求工具调用，程序解析工具名和参数。
+5. 程序执行真实工具，并把结果写回对话历史。
+6. 再次请求模型，让它基于工具结果继续回答或继续调用工具。
 
-            print(f"\n🔧 调用工具: {func_name}({func_args})")
+> 💡 **为什么是循环？** 因为一次工具调用可能不够。"查天气然后发邮件"这样的任务就需要两轮：第一轮查天气，第二轮根据天气结果决定是否发邮件。
 
-            # 执行真正的工具函数
-            result = get_weather(**func_args)
-            print(f"📋 结果: {result}")
-
-            # 将结果反馈给 LLM
-            messages.append({
-                "role": "tool",
-                "tool_call_id": tool_call.id,
-                "content": json.dumps(result, ensure_ascii=False)
-            })
-        # 继续循环，让 LLM 处理工具结果
-
-# 测试
-run_agent("北京和上海的天气怎么样？")
-```
-
-### 逐段解读
-
-**① 工具函数**：普通的 Python 函数。它可以做任何事——调 API、查数据库、读文件、执行计算。对 LLM 来说，它只是一个"黑盒"：输入参数 → 输出字符串结果。
-
-**② 工具 Schema**：这是整段代码中**最重要的部分**。LLM 看不到你的函数代码，它只能通过这个 JSON 定义来了解工具的能力边界。其中 `description` 字段是核心——它是 LLM 决策的唯一依据。
-
-**③ Agent 循环**：一个 `while True` 循环，每次把完整的对话历史发给 LLM：
-- 如果 `finish_reason == "stop"` → 模型已给出最终答案，结束
-- 如果 `finish_reason == "tool_calls"` → 执行工具后把结果追加入历史，继续循环
-
-> 💡 **为什么是循环？** 因为一次工具调用可能不够。"查天气然后发邮件"这样的任务就需要两轮：第一轮查天气，第二轮根据天气结果发邮件。
+完整的 SDK 代码将在第 3.5 节实战中统一展开。本节先把机制讲清楚：**LLM 决策，代码执行，结果再反馈给 LLM。**
 
 ---
 
@@ -131,42 +84,33 @@ run_agent("北京和上海的天气怎么样？")
 
 ### tool_choice：控制模型的工具使用策略
 
-```python
-tool_choice="auto"     # 默认 — 让模型自己判断（推荐大多数场景）
-tool_choice="none"     # 禁止 — 强制不用工具，只输出文本
-tool_choice="required" # 强制 — 必须调用某个工具
-tool_choice={"type": "function", "function": {"name": "get_weather"}}  # 指定特定工具
-```
+`tool_choice` 决定模型是否可以使用工具，以及是否必须使用工具。常见策略如下：
+
+| 设置 | 含义 | 适合场景 |
+|---|---|---|
+| `auto` | 让模型自己判断是否用工具 | 通用对话型 Agent，最常用 |
+| `none` | 禁止工具调用，只输出文本 | 纯聊天、角色扮演、无需外部数据的任务 |
+| `required` | 强制至少调用一个工具 | 明确需要实时数据或外部动作的任务 |
+| 指定工具名 | 强制调用某个特定工具 | 测试工具、构建固定流程 |
 
 | 场景 | 推荐设置 |
 |------|---------|
-| 通用对话型 Agent | `"auto"` |
-| 纯聊天 / 角色扮演 | `"none"` |
-| 明确知道需要数据的场景 | `"required"` |
+| 通用对话型 Agent | `auto` |
+| 纯聊天 / 角色扮演 | `none` |
+| 明确知道需要数据的场景 | `required` |
 | 测试某个特定工具 | 指定工具名 |
 
 ### strict 模式：生产环境必开
 
-OpenAI 在 2024 年推出了 Structured Outputs 功能：
+OpenAI 在 2024 年推出了 Structured Outputs 功能。可以把 `strict` 理解为"参数格式强校验"：开启后，模型输出的参数必须符合你声明的 JSON Schema。
 
-```python
-# 开启严格模式后，模型输出的参数保证 100% 符合 JSON Schema
-tools = [{
-    "type": "function",
-    "function": {
-        "name": "get_weather",
-        "strict": True,                        # ← 关键开关
-        "parameters": {
-            "type": "object",
-            "properties": {...},
-            "additionalProperties": False,      # ← 必须配合
-            "required": ["city"]
-        }
-    }
-}]
-```
+开启严格模式时要注意三点：
 
-开启条件：`strict: true` + `additionalProperties: False` + 所有参数声明类型。**生产环境强烈建议开启**，可以彻底消除因参数格式错误导致的运行时崩溃。
+- **声明 `strict: true`**：告诉模型必须严格遵守 Schema。
+- **禁止额外字段**：通常需要设置 `additionalProperties: false`，避免模型凭空加参数。
+- **完整声明参数类型**：每个字段都要有明确的类型、含义和必填规则。
+
+**生产环境强烈建议开启**，它可以显著减少因参数格式错误导致的运行时崩溃。
 
 ### 并行工具调用：独立任务同时做
 
@@ -180,24 +124,13 @@ tools = [{
 
 ## 错误处理：让 LLM 自己解决问题
 
-这是初学者最容易忽略的设计要点：
+这是初学者最容易忽略的设计要点：**工具不要让异常直接炸掉整个 Agent，而要把可理解的错误返回给模型。**
 
-```python
-# ❌ 错误做法：异常冒泡导致程序崩溃
-def bad_tool(query):
-    results = api.search(query)  # 如果网络超时？
-    return results               # 💥 整个 Agent 挂了
-
-# ✅ 正确做法：错误信息返回给 LLM，让它自行决策
-def good_tool(query):
-    try:
-        results = api.search(query)
-        return json.dumps(results)
-    except TimeoutError:
-        return '{"error": "搜索超时，请换更短的关键词"}'
-    except Exception as e:
-        return f'{{"error": "{str(e)}"}}'
-```
+| 错误做法 | 更好的做法 |
+|---|---|
+| 网络超时后直接抛异常，整个 Agent 中断 | 返回"搜索超时，请换更短的关键词或稍后重试" |
+| 参数非法时只说 `Invalid input` | 返回哪个字段错了、期望格式是什么、收到的值是什么 |
+| 权限不足时隐藏细节 | 告诉模型需要用户授权或更换工具 |
 
 **为什么这样设计？** 因为错误信息会出现在 LLM 的上下文中。一个聪明的 LLM 看到"搜索超时"后，可能会尝试缩短关键词重试；看到"API Key 无效"后会告知用户检查配置。这比直接抛异常优雅得多。
 
@@ -223,26 +156,19 @@ def good_tool(query):
 
 在继续阅读之前，试着回答以下问题（不要急着写代码，先用自然语言思考）：
 
-**练习 1**：如果要给 Agent 添加一个"当前时间"工具，它的 Schema 应该怎么写？description 中应该包含什么信息？
+**练习 1**：如果要给 Agent 添加一个"当前时间"工具，它的 Schema 应该包含哪些信息？description 中应该说明什么？
 
 <details>
 <summary>参考答案</summary>
 
-```python
-{
-    "type": "function",
-    "function": {
-        "name": "get_current_time",
-        "description": "获取当前的日期和时间。适合用于需要知道'现在几点''今天几号'的场景。",
-        "parameters": {
-            "type": "object",
-            "properties": {},
-            "required": []  # 无参数
-        }
-    }
-}
-```
-关键点：description 中说明了"什么时候该用"，即使无参数也要显式声明空对象。
+一个好的"当前时间"工具定义需要包含：
+
+- **工具名**：例如 `get_current_time`，让模型一眼知道它是获取当前时间。
+- **使用时机**：当用户问"现在几点""今天几号""当前日期"等问题时调用。
+- **参数设计**：如果只返回本地当前时间，可以无参数；如果支持时区，则需要 `timezone` 参数。
+- **返回格式**：例如返回日期、时间、时区和星期，方便模型组织回答。
+
+关键点：即使工具没有参数，也要明确告诉模型"这个工具不需要用户提供额外信息"。
 
 </details>
 
@@ -260,10 +186,7 @@ def good_tool(query):
 - 没有说明何时使用 vs 何时不使用
 - 没有参数描述
 
-更好的版本：
-```json
-{"description": "向指定邮箱发送邮件。仅在用户明确要求发送时调用。不适用于查询邮件或管理邮箱。"}
-```
+更好的版本可以这样写：向指定邮箱发送邮件；仅在用户明确要求发送时调用；不适用于查询邮件或管理邮箱。
 
 </details>
 

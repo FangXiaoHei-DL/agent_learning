@@ -431,7 +431,122 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   })();
 
-  // === 7. 中英文切换按钮 ===
+  // === 7. 左侧书籍目录折叠 ===
+  (function initSidebarCollapse() {
+    var scrollbox = document.querySelector('#sidebar mdbook-sidebar-scrollbox, #sidebar .sidebar-scrollbox');
+    if (!scrollbox) return;
+
+    var isZhPage = document.documentElement.lang === 'zh' || document.documentElement.lang === 'zh-CN';
+    var STORAGE_KEY = 'sidebar-collapsed-items';
+    var collapsedItems = {};
+
+    try {
+      collapsedItems = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    } catch (e) {
+      collapsedItems = {};
+    }
+
+    function saveCollapsedItems() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(collapsedItems));
+      } catch (e) {}
+    }
+
+    function getItemKey(li, index) {
+      var link = li.querySelector(':scope > a');
+      if (link && link.getAttribute('href')) {
+        return link.getAttribute('href');
+      }
+      return 'sidebar-item-' + index;
+    }
+
+    function getSectionWrapper(li) {
+      var next = li.nextElementSibling;
+      if (next && next.querySelector(':scope > ol.section, :scope > ul.section')) {
+        return next;
+      }
+      if (li.querySelector(':scope > ol.section, :scope > ul.section')) {
+        return li;
+      }
+      return null;
+    }
+
+    function getSectionList(wrapper) {
+      return wrapper ? wrapper.querySelector(':scope > ol.section, :scope > ul.section') : null;
+    }
+
+    function setCollapsed(li, wrapper, collapsed, key, shouldSave) {
+      li.classList.toggle('sidebar-item-collapsed', collapsed);
+      wrapper.classList.toggle('sidebar-section-collapsed', collapsed);
+      var button = li.querySelector(':scope > .sidebar-collapse-toggle');
+      if (button) {
+        button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        button.title = collapsed
+          ? (isZhPage ? '展开目录' : 'Expand section')
+          : (isZhPage ? '收起目录' : 'Collapse section');
+        button.setAttribute('aria-label', button.title);
+      }
+      if (shouldSave) {
+        collapsedItems[key] = collapsed;
+        saveCollapsedItems();
+      }
+    }
+
+    function enhanceSidebar() {
+      var chapter = scrollbox.querySelector('ol.chapter');
+      if (!chapter || chapter.dataset.collapseReady === '1') return !!chapter;
+
+      var chapterItems = chapter.querySelectorAll('li.chapter-item');
+      var collapsibleItems = [];
+      chapterItems.forEach(function(li) {
+        var wrapper = getSectionWrapper(li);
+        if (wrapper && getSectionList(wrapper)) {
+          collapsibleItems.push(li);
+        }
+      });
+
+      collapsibleItems.forEach(function(li, index) {
+        var wrapper = getSectionWrapper(li);
+        var section = getSectionList(wrapper);
+        var link = li.querySelector(':scope > a');
+        if (!wrapper || !section || !link || li.querySelector(':scope > .sidebar-collapse-toggle')) return;
+
+        var key = getItemKey(li, index);
+        li.classList.add('sidebar-collapsible');
+        wrapper.classList.add('sidebar-section-wrapper');
+
+        var toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'sidebar-collapse-toggle';
+        toggle.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        link.insertAdjacentElement('beforebegin', toggle);
+
+        var isActiveChapter = link.classList.contains('active') || li.classList.contains('active');
+        var hasActiveChild = !!section.querySelector('li.active, a.active');
+        var hasSavedState = Object.prototype.hasOwnProperty.call(collapsedItems, key);
+        var shouldCollapse = hasSavedState ? collapsedItems[key] : !(isActiveChapter || hasActiveChild);
+        setCollapsed(li, wrapper, shouldCollapse, key, false);
+
+        toggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          setCollapsed(li, wrapper, !li.classList.contains('sidebar-item-collapsed'), key, true);
+        });
+      });
+
+      chapter.dataset.collapseReady = '1';
+      return true;
+    }
+
+    if (enhanceSidebar()) return;
+
+    var observer = new MutationObserver(function() {
+      if (enhanceSidebar()) observer.disconnect();
+    });
+    observer.observe(scrollbox, { childList: true, subtree: true });
+  })();
+
+  // === 8. 中英文切换按钮 ===
   // 通过替换 URL 路径中的语言段（/zh/ ↔ /en/）实现切换，
   // 本地开发（serve.sh）和部署环境（GitHub Pages）使用完全相同的逻辑。
   var rightButtons = document.querySelector('.right-buttons');

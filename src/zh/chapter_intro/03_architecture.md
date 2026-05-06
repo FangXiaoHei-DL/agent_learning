@@ -91,125 +91,28 @@
 
 下面我们将摒弃玩具级的“天气查询”案例，直接手搓一个贴近算法真实业务流的**“广告算法调优 Agent”**骨架。它展示了高内聚的 ReAct 循环引擎如何维护状态、追踪轨迹并进行多工具路由。
 
-```python
-import json
-import traceback
-from typing import Callable, Dict, Any, Tuple
-from dataclasses import dataclass, field
-from enum import Enum
+工业级 Agent 的状态机调度器可以先用架构视角理解，而不必一上来阅读完整源码。一个可靠的调度器通常包含以下组件：
 
-# --- 1. 定义严谨的类型与状态空间 ---
+| 组件 | 职责 | 读者需要理解的重点 |
+|---|---|---|
+| 全局状态 | 保存目标、历史轨迹、当前轮次和终止状态 | Agent 不是无状态问答，而是持续累积上下文 |
+| LLM 决策器 | 根据观察结果生成下一步思考和行动 | 模型负责“决定做什么”，不直接完成所有事 |
+| 工具路由器 | 把模型选择的动作转交给真实工具执行 | 工具是确定性的执行边界 |
+| 观察记录器 | 把工具返回、错误和环境变化写回轨迹 | 下一轮推理依赖上一轮反馈 |
+| 护栏机制 | 限制最大轮数、检查格式、处理重复动作 | 防止幻觉、死循环和危险操作 |
 
-class AgentStatus(Enum):
-    RUNNING = "RUNNING"             # 正常循环流转中
-    COMPLETED = "COMPLETED"         # 成功达成高维目标
-    FAILED = "FAILED"               # 发生不可逆的致命错误
-    MAX_LOOPS_REACHED = "TIMEOUT"   # 触发死循环保护熔断
+以“广告算法调优 Agent”为例，它不会一次性给出结论，而是循环执行：先查询 pCVR 下滑幅度，再检查长尾视频类别，再分析内容相似度，最后输出干预建议。
 
-@dataclass
-class AgentContext:
-    """维护 Agent 全生命周期的全局记忆与状态上下文"""
-    task_goal: str
-    scratchpad: list[str] = field(default_factory=list)  # 记录 T-A-O 完整轨迹
-    current_step: int = 0
-    max_steps: int = 12             # 严控最大推理深度
-    status: AgentStatus = AgentStatus.RUNNING
+如果要落到工程实现，伪流程如下：
 
-# --- 2. 模拟 LLM 引擎与工具库抽象 ---
+1. 初始化任务目标和空白轨迹。
+2. 将目标与历史轨迹交给 LLM，要求它输出“思考、动作、动作参数”。
+3. 校验动作格式和参数是否合法。
+4. 调用对应工具并截断过长返回。
+5. 把观察结果写回轨迹。
+6. 如果任务完成、达到最大轮数或触发护栏，则结束；否则进入下一轮。
 
-class LLMEngine:
-    def generate(self, prompt: str) -> str:
-        # 生产环境中，此处对接支持长上下文的模型 (如 Gemini 1.5 Pro / GPT-4o)
-        pass
-
-# --- 3. 工业级 ReAct 循环调度器 ---
-
-class AutonomousAlgorithmAgent:
-    def __init__(self, llm: LLMEngine, tools: Dict[str, Callable]):
-        self.llm = llm
-        self.tools = tools
-        self.tools["Finish"] = self._tool_finish  # 注入系统级任务终结节点
-        
-        # 极其严格的 System Prompt 护栏设定
-        self.system_prompt = f"""
-你是一个资深的推荐算法诊断智能体。你的目标是自主分析并解决数据异常。
-你可以调用的工具列表：{list(self.tools.keys())}。
-
-⚠️ 核心约束：你的每一次回复必须严格按照以下格式输出，禁止任何多余解释！
-Thought: 思考你当前需要做什么，分析现有的数据还缺什么。
-Action: 你决定调用的工具名称 (必须是上面列表中的一个)。
-Action Input: 传入工具的参数，必须是合法的 JSON 对象。
-"""
-
-    def _tool_finish(self, final_report: str) -> str:
-        """内置工具：用于 Agent 收集完所有线索后主动宣告结束"""
-        return "SYSTEM_SUCCESS_FLAG"
-
-    def execute_task(self, user_goal: str) -> str:
-        """启动 感知-思考-行动 的状态机主循环"""
-        context = AgentContext(task_goal=user_goal)
-        print(f"\n🚀 [Agent Booting] 接收优化目标: {context.task_goal}\n" + "="*55)
-        
-        while context.status == AgentStatus.RUNNING:
-            context.current_step += 1
-            print(f"\n🔄 --- [PTA Loop {context.current_step}/{context.max_steps}] ---")
-            
-            # 【阶段 1 & 2: 👁️ 上下文感知 + 🧠 核心思考】
-            # 将历史草稿本序列化，供模型感知并做出下一步规划
-            full_prompt = self._build_prompt(context)
-            llm_response = self.llm.generate(full_prompt)
-            
-            try:
-                # 解析模型输出的 Thought, Action, Action Input
-                thought, action_name, action_args = self._parse_llm_output(llm_response)
-                
-                # 同步更新局部记忆
-                context.scratchpad.append(f"Thought: {thought}")
-                context.scratchpad.append(f"Action: {action_name}")
-                context.scratchpad.append(f"Action Input: {json.dumps(action_args)}")
-                
-                print(f"🧠 [Thought] {thought}")
-                print(f"🦾 [Action Decision] -> {action_name}({action_args})")
-                
-                # 终结态拦截
-                if action_name == "Finish":
-                    context.status = AgentStatus.COMPLETED
-                    return action_args.get("final_report", "分析已完成。")
-                    
-            except Exception as parse_err:
-                # 容错：如果大模型产生幻觉，没有按格式输出，将其作为反馈扔回环境，强制其自我纠正
-                obs = f"System Error: 输出解析失败，请确保输出合法的 JSON 参数。错误: {str(parse_err)}"
-                context.scratchpad.append(f"Observation: {obs}")
-                print(f"⚠️ [格式幻觉] 已记录至短期记忆，强制进入下一轮重试。")
-                continue
-                
-            # 【阶段 3: 🦾 行动执行与环境状态转移】
-            observation = self._execute_tool(action_name, action_args)
-            
-            # 记录真实环境反馈
-            context.scratchpad.append(f"Observation: {observation}")
-            print(f"📊 [Observation] {observation}")
-            
-            # 系统级护栏：防止死循环熔断
-            if context.current_step >= context.max_steps:
-                context.status = AgentStatus.MAX_LOOPS_REACHED
-                break
-
-        return f"任务异常终止。最终调度器状态: {context.status.name}"
-
-    def _execute_tool(self, name: str, args: dict) -> str:
-        """沙盒化的工具路由执行器"""
-        if name not in self.tools:
-            return f"Error: 找不到工具 '{name}'。请检查 Action 拼写。"
-        try:
-            result = self.tools[name](**args)
-            # 关键防御机制：限制单次 Observation 的最大 Token 长度
-            return str(result)[:3000] 
-        except Exception:
-            return f"Tool Exception: {traceback.format_exc()[:500]}"
-            
-    # (_build_prompt 和 _parse_llm_output 为基础字符串解析逻辑，此处省略)
-```
+真正的代码实现会在后续框架和项目章节展开。本章的重点是理解：**Agent 架构的核心不是某段循环代码，而是状态、工具、反馈和护栏组成的闭环系统。**
 
 ### 生产环境流转轨迹示例：
 

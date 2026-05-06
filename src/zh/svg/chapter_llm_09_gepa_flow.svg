@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 420" width="880" height="420" font-family="'PingFang SC','Microsoft YaHei',Arial,sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L9,4 z" fill="#4f46e5"/>
+    </marker>
+  </defs>
+  <rect width="880" height="420" rx="18" fill="#f8fafc"/>
+  <text x="440" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#0f172a">GEPA：轨迹反思驱动的 Prompt 进化</text>
+  <text x="440" y="58" text-anchor="middle" font-size="13" fill="#64748b">保留一批候选 Prompt，读取执行轨迹，用自然语言反思来定向变异</text>
+
+  <rect x="45" y="92" width="145" height="58" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="117" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="#1d4ed8">Prompt 种群</text>
+  <text x="117" y="136" text-anchor="middle" font-size="11" fill="#2563eb">多个候选版本</text>
+
+  <rect x="245" y="92" width="145" height="58" rx="12" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="317" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">采样任务</text>
+  <text x="317" y="136" text-anchor="middle" font-size="11" fill="#16a34a">选一批训练样本</text>
+
+  <rect x="445" y="92" width="145" height="58" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+  <text x="517" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="#c2410c">运行系统</text>
+  <text x="517" y="136" text-anchor="middle" font-size="11" fill="#ea580c">完整 rollout</text>
+
+  <rect x="645" y="92" width="145" height="58" rx="12" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="717" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="#0e7490">记录 Trace</text>
+  <text x="717" y="136" text-anchor="middle" font-size="11" fill="#0891b2">Prompt、输出、工具</text>
+
+  <rect x="645" y="235" width="145" height="58" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="717" y="259" text-anchor="middle" font-size="13" font-weight="bold" fill="#92400e">评分与反馈</text>
+  <text x="717" y="279" text-anchor="middle" font-size="11" fill="#b45309">分数 + 文字解释</text>
+
+  <rect x="445" y="235" width="145" height="58" rx="12" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+  <text x="517" y="259" text-anchor="middle" font-size="13" font-weight="bold" fill="#be185d">LLM 反思</text>
+  <text x="517" y="279" text-anchor="middle" font-size="11" fill="#db2777">诊断失败原因</text>
+
+  <rect x="245" y="235" width="145" height="58" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="317" y="259" text-anchor="middle" font-size="13" font-weight="bold" fill="#4338ca">Prompt 变异</text>
+  <text x="317" y="279" text-anchor="middle" font-size="11" fill="#4f46e5">生成改进版本</text>
+
+  <rect x="45" y="235" width="145" height="58" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="117" y="259" text-anchor="middle" font-size="13" font-weight="bold" fill="#6d28d9">Pareto 前沿</text>
+  <text x="117" y="279" text-anchor="middle" font-size="11" fill="#7c3aed">保留互补强项</text>
+
+  <line x1="190" y1="121" x2="236" y2="121" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="390" y1="121" x2="436" y2="121" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="590" y1="121" x2="636" y2="121" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="717" y1="150" x2="717" y2="226" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="645" y1="264" x2="599" y2="264" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="445" y1="264" x2="399" y2="264" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="245" y1="264" x2="199" y2="264" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arr)"/>
+  <path d="M117 235 C70 205 70 178 117 150" fill="none" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arr)"/>
+
+  <rect x="150" y="335" width="580" height="48" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="440" y="355" text-anchor="middle" font-size="12" font-weight="bold" fill="#334155">为什么不是只保留平均分最高的 Prompt？</text>
+  <text x="440" y="374" text-anchor="middle" font-size="11" fill="#64748b">Pareto 前沿会留下“数学强”“问答强”“格式强”等不同优势版本，避免过早丢掉有价值的方向</text>
+</svg>

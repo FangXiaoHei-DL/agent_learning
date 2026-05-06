@@ -23,6 +23,7 @@
   - [2.6 基座模型前沿进展与选型指南](./chapter_llm/06_foundation_model_landscape.md)
   - [2.7 基座模型架构详解](./chapter_llm/07_model_architecture.md)
   - [2.8 SFT 与强化学习训练数据准备](./chapter_llm/08_training_data.md)
+  - [2.9 Prompt 自动调优](./chapter_llm/09_automatic_prompt_optimization.md)
 
 ---
 

@@ -764,3 +764,5 @@ RL 训练中模型学到了"骗过"奖励函数的捷径，而非真正提升能
 > 两章组合阅读效果最佳。
 
 *上一节：[2.7 基座模型架构详解](./07_model_architecture.md)*
+
+*下一节：[2.9 Prompt 自动调优](./09_automatic_prompt_optimization.md)*

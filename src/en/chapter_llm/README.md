@@ -6,7 +6,7 @@
 
 ## Chapter Overview
 
-This chapter explains how large language models work at an intuitive level, then systematically covers how to communicate with models effectively through Prompt Engineering, introduces common prompting strategies, and walks you through your first API call step by step. Finally, we dive into key parameters like Token and Temperature to help you truly "master" language models.
+This chapter explains how large language models work at an intuitive level, then systematically covers how to communicate with models effectively through Prompt Engineering, introduces common prompting strategies, and walks you through your first API call step by step. Finally, we dive into key parameters like Token and Temperature to help you truly "master" language models, then extend into foundation model architecture, training data preparation, and automatic prompt optimization.
 
 ## Chapter Goals
 
@@ -20,6 +20,7 @@ After completing this chapter, you will be able to:
 - ✅ Understand the architectural components of mainstream models (MHA/GQA/MLA, RoPE, SwiGLU, MoE) and 2026 breakthroughs (Hybrid Attention, Attention Residuals, MuonClip, Engram Memory)
 - ✅ Master the latest advances in foundation models and model selection strategies for Agent development
 - ✅ Understand the core principles of SFT and RL training data preparation: data volume selection, quality evaluation, and reward function design
+- ✅ Learn how automatic prompt optimization uses traces, textual feedback, reflection, and Pareto-style evolution to improve complex Agent prompts
 
 ## Chapter Structure
 
@@ -33,6 +34,7 @@ After completing this chapter, you will be able to:
 | 3.6 Foundation Model Landscape | Industry landscape, model ecosystem (Kimi K2/K2.5, DeepSeek V4, Qwen3.5), Agent selection guide | ⭐⭐⭐ |
 | 3.7 Foundation Model Architecture | MHA→GQA→MLA, RoPE, SwiGLU, MoE, and 2026 breakthroughs: Hybrid Attention, Attention Residuals, MuonClip, Engram Memory | ⭐⭐⭐⭐ |
 | 3.8 SFT & RL Training Data Preparation | Data volume selection, quality evaluation, SFT data creation, RL reward function design, difficulty calibration and curriculum learning | ⭐⭐⭐ |
+| 3.9 Automatic Prompt Optimization | GEPA-style reflective prompt evolution, textual feedback, trace-driven mutation, Pareto selection, and practical Agent optimization workflows | ⭐⭐⭐⭐ |
 
 ## Core Concepts at a Glance
 

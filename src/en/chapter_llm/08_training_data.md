@@ -777,3 +777,5 @@ Before starting training, use the following checklist to review your data prepar
 ---
 
 *Previous section: [3.7 Foundation Model Architecture Explained](./07_model_architecture.md)*
+
+*Next section: [3.9 Automatic Prompt Optimization](./09_automatic_prompt_optimization.md)*

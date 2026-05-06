@@ -29,6 +29,7 @@
   - [3.6 Frontier Foundation Models and Selection Guide](./chapter_llm/06_foundation_model_landscape.md)
   - [3.7 Foundation Model Architecture Deep Dive](./chapter_llm/07_model_architecture.md)
   - [3.8 SFT and Reinforcement Learning Training Data Preparation](./chapter_llm/08_training_data.md)
+  - [3.9 Automatic Prompt Optimization](./chapter_llm/09_automatic_prompt_optimization.md)
 
 ---
 

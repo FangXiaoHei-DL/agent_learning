@@ -4,9 +4,11 @@
 
 <br>
 
-# 🤖 从零开始学 Agent
+# 🤖 Agent Learning：从零开始学 Agent
 
 **一本系统、全面、实战导向的 AI Agent 开发教程**
+
+**Agent Learning**（`agent_learning`）是一个开源 AI Agent 学习路线图与实战教程，覆盖 LLM Agent、AI Agent、智能体开发、多智能体系统、RAG、工具调用、记忆系统、LangChain、LangGraph、MCP、Agentic RL 等主题。
 
 **每日自动追踪 arXiv 前沿论文，内容持续更新，始终紧跟最新进展**
 

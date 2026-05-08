@@ -4,9 +4,11 @@
 
 <br>
 
-# 🤖 Learn Agent Development from Scratch
+# 🤖 Agent Learning: Learn Agent Development from Scratch
 
 **A systematic, comprehensive, and practice-oriented AI Agent development guide**
+
+**Agent Learning** (`agent_learning`) is an open-source AI Agent learning roadmap and hands-on tutorial covering LLM agents, AI agents, agentic workflows, multi-agent systems, RAG, tool use, memory, LangChain, LangGraph, MCP, and agentic RL.
 
 **Daily auto-tracking of arXiv frontier papers — content stays cutting-edge, always.**
 

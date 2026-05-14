@@ -384,19 +384,20 @@ if result["finish_reason"] == "length":
 ## Presence Penalty & Frequency Penalty：控制重复
 
 ```python
-# 这两个参数帮助避免模型像车轱辘话一样重复自己
+def demo_penalties():
+    # 这两个参数帮助避免模型像车轱辘话一样重复自己
     response = client.chat.completions.create(
         model="qwen-plus",
         messages=[{"role": "user", "content": "列举10种不同的创业方向"}],
-    
-    # presence_penalty：存在惩罚（只要出现过就惩罚，鼓励开启新话题）
-    # 范围：-2.0 到 2.0，正值降低话题重复率
-    presence_penalty=0.5,
-    
-    # frequency_penalty：频率惩罚（用的次数越多越不想用，鼓励词汇丰富度）
-    # 范围：-2.0 到 2.0，正值降低高频词
-    frequency_penalty=0.3,
-)
+
+        # presence_penalty：存在惩罚（只要出现过就惩罚，鼓励开启新话题）
+        # 范围：-2.0 到 2.0，正值降低话题重复率
+        presence_penalty=0.5,
+
+        # frequency_penalty：频率惩罚（用的次数越多越不想用，鼓励词汇丰富度）
+        # 范围：-2.0 到 2.0，正值降低高频词
+        frequency_penalty=0.3,
+    )
 
 # 适合用于：需要列举多样选项、生成长篇不重复研报的场景
 ```
@@ -404,13 +405,13 @@ if result["finish_reason"] == "length":
 ## stop：自定义停止条件
 
 ```python
-# 让模型在特定字符串处戛然而止，这招在数据提取时极其省钱
+def demo_stop():
+    # 让模型在特定字符串处戛然而止，这招在数据提取时极其省钱
     response = client.chat.completions.create(
         model="qwen-plus",
         messages=[{"role": "user", "content": "请按格式输出：\n名称：\n价格：\n描述："}],
-    }],
-    stop=["描述："],  # 一旦生成到"描述："这个词，立即强行停止 API 生成
-)
+        stop=["描述："],  # 一旦生成到"描述："这个词，立即强行停止 API 生成
+    )
 
 # 实用场景：结构化数据防废话提取
 def extract_until_marker(text: str, stop_marker: str) -> str:

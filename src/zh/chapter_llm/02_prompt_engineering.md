@@ -16,8 +16,6 @@ Prompt Engineering 是指**通过精心设计输入文本（Prompt），引导 L
 
 ## 消息结构：System / User / Assistant
 
-在调用 OpenAI 等 API 时，对话由三种角色的消息组成：
-
 在 Chat Completions 这类接口中，一次对话通常由三类消息组成：
 
 | 角色 | 作用 | 典型内容 |

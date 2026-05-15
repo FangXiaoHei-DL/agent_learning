@@ -682,9 +682,6 @@
 |------|------|---------|
 | **第1章** 什么是 Agent？ | Agent 的定义、架构、历史与应用场景 | 建立完整的概念框架 |
 | **第2章** 大语言模型基础 | LLM 原理、Prompt Engineering、API 调用 | 熟练驾驭 Agent 的"大脑" |
-
-> 💡 开发环境搭建已移至[附录 F](./chapter_setup/README.md)，建议在第 2 章之前或期间完成环境配置。
-
 ---
 
 *开始学习：[第1章 什么是 Agent？](./chapter_intro/README.md)*

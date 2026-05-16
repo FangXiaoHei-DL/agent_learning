@@ -594,7 +594,7 @@ messages = pipeline.build(
 # 📥 Gather: collected 9 information fragments
 # 🔍 Select: filtered to 9 fragments
 # 📦 Summarize: compressed 0 overly long fragments
-# 🏗️ Construct: build complete, approximately XXX tokens
+# 🏗️ Construct: build complete, approximately 5000 tokens
 ```
 
 ## Section Summary

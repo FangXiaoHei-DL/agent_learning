@@ -594,7 +594,7 @@ messages = pipeline.build(
 # 📥 Gather: 收集了 9 个信息片段
 # 🔍 Select: 筛选出 9 个片段
 # 📦 Summarize: 压缩了 0 个超长片段
-# 🏗️ Construct: 构建完成，约 XXX tokens
+# 🏗️ Construct: 构建完成，约 5000 tokens
 ```
 
 ## 本节小结

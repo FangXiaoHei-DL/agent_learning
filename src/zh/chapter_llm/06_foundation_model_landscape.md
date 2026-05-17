@@ -331,3 +331,19 @@ def select_model(requirements: dict) -> str:
 [9] ABDIN M, JACOBS S A, AWAN A A, et al. Phi-4 technical report[R]. arXiv preprint arXiv:2412.08905, 2024.
 
 [10] MOONSHOT AI. Kimi K2: Open agentic intelligence[EB/OL]. 2025. https://huggingface.co/moonshotai/Kimi-K2-Instruct.
+
+---
+
+## 📰 最新论文速递
+
+> 🗓️ 本节由每日自动更新任务维护，最近更新：**2026 年 5 月 17 日**
+
+### [Cola DLM：连续隐空间扩散语言模型——非自回归文本生成新范式](https://arxiv.org/abs/2605.06548)
+
+**发表**：2026 年 5 月 7 日 | [arXiv:2605.06548](https://arxiv.org/abs/2605.06548)
+
+**核心贡献**：字节跳动 Seed 团队提出 Cola DLM，打破大语言模型必须自回归逐 token 生成的范式。该模型采用分层连续隐空间扩散架构：Text VAE 将文本映射到连续隐表示，block-causal 扩散 Transformer 在隐空间建模全局语义先验，最后解码生成文本。在 4 个研究问题、8 个基准的严格对比（含 ~20亿参数自回归基线）中验证了强扩展性，并已开源 Apache 2.0 许可的代码与检查点。
+
+**与本章关系**：对应本章第 3 节"基础模型架构演进"，代表语言模型从自回归范式向扩散范式探索的重要前沿，有助于理解未来基座模型的多样化架构方向。
+
+---

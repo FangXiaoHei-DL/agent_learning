@@ -31,7 +31,8 @@ client = OpenAI(
     base_url="https://api.codebuddy.cn/v1",
 )
 
-SVG_DIR = "/Users/haozhexing/workspace/ft_send/agent_learning/src/en/svg"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SVG_DIR = os.path.join(SCRIPT_DIR, "..", "src", "en", "svg")
 
 # Regex to find Chinese characters
 ZH_RE = re.compile(r'[\u4e00-\u9fff\u3400-\u4dbf\u20000-\u2a6df]')

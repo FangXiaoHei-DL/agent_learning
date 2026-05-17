@@ -218,7 +218,7 @@
 
 ---
 
-- [附录]()
+# 附录
 
 - [附录 A：常用 Prompt 模板大全](./appendix/prompt_templates.md)
 - [附录 B：Agent 开发常见问题 FAQ](./appendix/faq.md)

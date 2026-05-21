@@ -6,9 +6,11 @@
 
 # 🤖 Agent Learning：从零开始学 Agent
 
-**一本系统、全面、实战导向的 AI Agent 开发教程**
+**一份从 LLM 基础到生产级 Agent 系统的完整开源学习路线图。**
 
-**Agent Learning**（`agent_learning`）是一个开源 AI Agent 学习路线图与实战教程，覆盖 LLM Agent、AI Agent、智能体开发、多智能体系统、RAG、工具调用、记忆系统、LangChain、LangGraph、MCP、Agentic RL 等主题。
+**Agent Learning**（`agent_learning`）是一个系统、实战导向的 AI Agent 学习路线图与动手教程，覆盖 LLM 基础、RAG、记忆系统、工具调用、Function Calling、Agentic Workflow、LangChain、LangGraph、MCP、多智能体系统、评估、部署和 Agentic RL。
+
+> 如果你想系统学习如何构建 AI Agent，而不只是会用 ChatGPT，本项目会从 LLM 基础讲到 RAG、Memory、Tool Use、Planning、多 Agent、LangGraph、MCP、部署评估与生产级 Agent 系统。
 
 **每日自动追踪 arXiv 前沿论文，内容持续更新，始终紧跟最新进展**
 
@@ -23,6 +25,23 @@
 <br>
 
 [<img src="https://img.shields.io/badge/📖_在线阅读（中文）-4CAF50?style=for-the-badge" alt="在线阅读中文版">](https://Haozhe-Xing.github.io/agent_learning/zh/)&nbsp;&nbsp;&nbsp;[<img src="https://img.shields.io/badge/📖_Read_Online_(English)-2196F3?style=for-the-badge" alt="Read Online English">](https://Haozhe-Xing.github.io/agent_learning/en/)
+
+<br>
+
+<table>
+<tr>
+<td width="50%" align="center">
+<img src="scripts/agent2.png" width="100%" alt="Agent Learning 在线书截图 - 前沿研究章节">
+<br>
+<sub>每日更新的 Agentic-RL 前沿研究章节</sub>
+</td>
+<td width="50%" align="center">
+<img src="scripts/grpo_chapter.png" width="100%" alt="Agent Learning 在线书截图 - GRPO 章节">
+<br>
+<sub>循序渐进的 GRPO / GSPO 学习内容</sub>
+</td>
+</tr>
+</table>
 
 <br>
 
@@ -45,6 +64,27 @@
 - 🔔 **不错过任何突破**：无需手动追踪大量研究源，本仓库自动完成，让你专注于学习和构建。
 
 > 💡 这意味着你在这里阅读的内容**不是静态的** —— 它会随着 AI Agent 领域的最新进展持续演进。
+
+---
+
+## 👥 适合谁阅读？
+
+- **开发者**：想真正构建 AI Agent 应用，而不只是写 Prompt 调聊天机器人
+- **学生和初学者**：需要一条从 LLM 基础到 Agent 系统的系统学习路径
+- **LLM 应用工程师**：正在实践 RAG、工具调用、记忆系统、LangGraph、MCP 和评估
+- **研究者和技术创作者**：希望把前沿 Agent 论文和工程实践连接起来
+- **产品和创业团队**：想理解生产级 Agent 工作流如何设计与落地
+
+---
+
+## 🧭 学习路径
+
+| 路线 | 从这里开始 | 学习目标 |
+| ---- | ---------- | -------- |
+| **新手路线** | LLM 基础 → Prompt Engineering → Function Calling → RAG → Memory → ReAct | 理解一个 Agent 如何端到端工作 |
+| **工程路线** | Tool Layer → LangGraph → Evaluation → Security → Deployment → Observability | 构建生产级 Agent 系统 |
+| **研究路线** | ReAct → Reflexion → MemGPT → PPO / DPO / GRPO → Agentic RL | 跟进并理解 Agent 前沿研究 |
+| **实战路线** | Hello Agent → RAG QA Agent → Memory Agent → Data Analysis Agent → Coding Agent | 通过完整应用边做边学 |
 
 ---
 
@@ -365,9 +405,26 @@ git push origin feature/improve-chapter-4
 
 ---
 
+## 🗺️ 项目路线图
+
+- [x] 基于 mdBook 的中英文在线书
+- [x] 120+ 原创 SVG 架构图和流程图
+- [x] Agent 核心概念交互式动画
+- [x] 关键 Agent 论文精读章节
+- [x] 覆盖 PPO / DPO / GRPO 的 Agentic RL 内容
+- [ ] 可运行 Agent 示例项目和模板
+- [ ] Agent 术语表与关键词速查表
+- [ ] Agent 架构图合集
+- [ ] 面试题和自测题
+- [ ] 带评估与可观测性的生产级 Agent 模板
+
+---
+
 ## ⭐ Star History
 
 如果这个项目对你有帮助，请给个 Star ⭐，这是对作者最大的鼓励！
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Haozhe-Xing/agent_learning&type=Date)](https://www.star-history.com/#Haozhe-Xing/agent_learning&Date)
 
 ---
 

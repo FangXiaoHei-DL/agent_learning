@@ -6,9 +6,11 @@
 
 # 🤖 Agent Learning: Learn Agent Development from Scratch
 
-**A systematic, comprehensive, and practice-oriented AI Agent development guide**
+**The complete open-source roadmap for learning AI Agents — from LLM basics to production-ready Agent systems.**
 
-**Agent Learning** (`agent_learning`) is an open-source AI Agent learning roadmap and hands-on tutorial covering LLM agents, AI agents, agentic workflows, multi-agent systems, RAG, tool use, memory, LangChain, LangGraph, MCP, and agentic RL.
+**Agent Learning** (`agent_learning`) is a systematic, practice-oriented AI Agent learning roadmap and hands-on tutorial covering LLM fundamentals, RAG, memory, tool use, function calling, agentic workflows, LangChain, LangGraph, MCP, multi-agent systems, evaluation, deployment, and agentic RL.
+
+> If you want to learn how to build AI Agents — not just use ChatGPT, but understand how agents retrieve knowledge, remember context, call tools, plan actions, collaborate, and run safely in production — this project is for you.
 
 **Daily auto-tracking of arXiv frontier papers — content stays cutting-edge, always.**
 
@@ -23,6 +25,23 @@
 <br>
 
 [<img src="https://img.shields.io/badge/📖_Read_Online_(中文)-4CAF50?style=for-the-badge" alt="Read Online Chinese">](https://Haozhe-Xing.github.io/agent_learning/zh/)&nbsp;&nbsp;&nbsp;[<img src="https://img.shields.io/badge/📖_Read_Online_(English)-2196F3?style=for-the-badge" alt="Read Online English">](https://Haozhe-Xing.github.io/agent_learning/en/)
+
+<br>
+
+<table>
+<tr>
+<td width="50%" align="center">
+<img src="scripts/agent2.png" width="100%" alt="Agent Learning online book screenshot - frontier research chapter">
+<br>
+<sub>Daily updated Agentic-RL frontier research chapter</sub>
+</td>
+<td width="50%" align="center">
+<img src="scripts/grpo_chapter.png" width="100%" alt="Agent Learning online book screenshot - GRPO chapter">
+<br>
+<sub>Step-by-step GRPO / GSPO learning content</sub>
+</td>
+</tr>
+</table>
 
 <br>
 
@@ -45,6 +64,27 @@
 - 🔔 **Never Miss a Breakthrough**: No need to manually track dozens of research feeds — this repo does it for you, so you can focus on learning and building.
 
 > 💡 This means the content you read here is **not static** — it evolves continuously with the latest advances in the AI Agent field.
+
+---
+
+## 👥 Who Is This For?
+
+- **Developers** who want to build real AI Agent applications instead of only prompting chatbots
+- **Students and beginners** who need a structured path from LLM basics to Agent systems
+- **LLM application engineers** working with RAG, tool calling, memory, LangGraph, MCP, and evaluation
+- **Researchers and builders** who want to connect frontier Agent papers with engineering practice
+- **Product and startup teams** exploring production-ready Agent workflows
+
+---
+
+## 🧭 Learning Paths
+
+| Path | Start Here | Goal |
+| ---- | ---------- | ---- |
+| **Beginner Path** | LLM basics → Prompt Engineering → Function Calling → RAG → Memory → ReAct | Understand how an Agent works end to end |
+| **Engineering Path** | Tool Layer → LangGraph → Evaluation → Security → Deployment → Observability | Build production-ready Agent systems |
+| **Research Path** | ReAct → Reflexion → MemGPT → PPO / DPO / GRPO → Agentic RL | Follow and understand frontier Agent research |
+| **Project Path** | Hello Agent → RAG QA Agent → Memory Agent → Data Analysis Agent → Coding Agent | Learn by building complete applications |
 
 ---
 
@@ -366,9 +406,26 @@ This project is open-sourced under the [MIT License](LICENSE).
 
 ---
 
+## 🗺️ Project Roadmap
+
+- [x] Chinese / English online book powered by mdBook
+- [x] 120+ original SVG architecture diagrams and flowcharts
+- [x] Interactive animations for core Agent concepts
+- [x] Paper reading sections for key Agent research
+- [x] Agentic RL chapters covering PPO / DPO / GRPO
+- [ ] Runnable Agent example projects and templates
+- [ ] Agent glossary and keyword cheat sheet
+- [ ] Agent architecture diagram gallery
+- [ ] Interview questions and self-check exercises
+- [ ] Production-ready Agent template with evaluation and observability
+
+---
+
 ## ⭐ Star History
 
 If this project helps you, please give it a Star ⭐ — it's the greatest encouragement for the author!
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Haozhe-Xing/agent_learning&type=Date)](https://www.star-history.com/#Haozhe-Xing/agent_learning&Date)
 
 ---
 

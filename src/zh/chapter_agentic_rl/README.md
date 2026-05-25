@@ -14,6 +14,7 @@
 - ✅ 完成一个完整的 SFT + GRPO 训练 Pipeline
 - ✅ 掌握专为 Agent 微调的数据构建方法（工具调用轨迹、Gorilla/ToolBench 数据集）
 - ✅ 理解 Agentic 数据飞轮：如何让 Agent 用自身运行数据持续自我进化
+- ✅ 掌握 Self-Evolution Agent 的系统架构：让 Agent 从记忆、Prompt、Skill 到模型训练持续改进
 
 ## ⏱️ 预计学习时间
 
@@ -61,6 +62,7 @@
 | 10.7 | 最新研究进展（2025—2026） | 纵览 DeepSeek-R1、DAPO、VAPO、SAR 等前沿工作，掌握领域最新动态 |
 | 10.8 | 专为 Agent 的微调 | 工具调用数据构建、三大开源数据集（Gorilla/ToolBench/AgentInstruct）、Agent SFT 专项配置 |
 | 10.9 | Agentic 数据飞轮 | 轨迹收集→质量过滤→奖励标注→训练迭代的完整闭环系统设计 |
+| 10.10 | Self-Evolution Agent | 记忆、Prompt、Skill、评估与数据飞轮协同形成自我改进闭环 |
 
 ---
 

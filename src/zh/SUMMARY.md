@@ -100,6 +100,7 @@
   - [10.7 最新研究进展（2025—2026）](./chapter_agentic_rl/07_latest_research.md)
   - [10.8 专为 Agent 的微调：让模型真正会用工具](./chapter_agentic_rl/08_agent_finetuning.md)
   - [10.9 Agentic 数据飞轮：让 Agent 自我进化](./chapter_agentic_rl/09_data_flywheel.md)
+  - [10.10 Self-Evolution Agent：从会执行到会自我改进](./chapter_agentic_rl/10_self_evolution_agent.md)
 
 ---
 

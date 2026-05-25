@@ -779,3 +779,7 @@ Agentic 数据飞轮的本质是：**用 Agent 自身的运行数据来训练更
 4. Chen et al. "Self-play Fine-tuning Converts Weak Language Models to Strong Language Models (SPIN)." ICML 2024.
 5. Guo et al. "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning." DeepSeek 2025.
 6. Mitra et al. "AgentInstruct: Toward Generative Teaching with Agentic Flows." Microsoft Research 2024.
+
+---
+
+*下一节：[10.10 Self-Evolution Agent：从会执行到会自我改进](./10_self_evolution_agent.md)*

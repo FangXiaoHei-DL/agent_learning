@@ -223,7 +223,7 @@ class MultimodalIndex:
         self.chunks.append(chunk)
 
     def search(self, query: str, top_k: int = 5) -> list[MultimodalChunk]:
-        """A placeholder lexical search. Replace with vector or hybrid retrieval in production."""
+        """A minimal lexical baseline; use vector or hybrid retrieval in production."""
         scored = []
         query_terms = set(query.lower().split())
         for chunk in self.chunks:
@@ -234,7 +234,7 @@ class MultimodalIndex:
         return [chunk for _, chunk in scored[:top_k]]
 ```
 
-In production, replace this placeholder with:
+In production, replace this baseline with:
 
 - text embeddings for captions, transcripts, and summaries;
 - image embeddings for visual similarity;

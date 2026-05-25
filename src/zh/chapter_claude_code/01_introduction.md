@@ -475,4 +475,4 @@ Claude Code 的能力覆盖软件开发的全生命周期：
 
 ---
 
-*下一节：[15.2 Claude Code 的工具系统](./02_tools.md)*
+*下一节：[14.2 Claude Code 核心架构](./02_architecture.md)*

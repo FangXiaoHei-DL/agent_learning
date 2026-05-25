@@ -122,7 +122,7 @@
 </td>
 <td width="50%" align="center">
 
-**ReAct 推理框架（第 6 章）**
+**ReAct 推理框架（第 5 章）**
 
 <img src="src/zh/svg/chapter_planning_02_react_loop.svg" width="420" alt="ReAct 推理框架">
 
@@ -138,7 +138,7 @@
 <tr>
 <td width="50%" align="center">
 
-**Function Calling 完整流程（第 4 章）**
+**Function Calling 完整流程（第 3 章）**
 
 <img src="src/zh/svg/chapter_tools_02_function_calling.svg" width="480" alt="Function Calling 流程">
 
@@ -147,7 +147,7 @@
 </td>
 <td width="50%" align="center">
 
-**RAG 检索增强生成（第 7 章）**
+**RAG 检索增强生成（第 6 章）**
 
 <img src="src/zh/svg/chapter_rag_01_rag_flow.svg" width="480" alt="RAG 工作原理">
 
@@ -163,7 +163,7 @@
 <tr>
 <td width="50%" align="center">
 
-**记忆系统三层架构（第 5 章）**
+**记忆系统三层架构（第 4 章）**
 
 <img src="src/zh/svg/chapter_memory_01_memory_types.svg" width="480" alt="记忆系统三层架构">
 
@@ -172,7 +172,7 @@
 </td>
 <td width="50%" align="center">
 
-**提示工程 vs 上下文工程（第 8 章）**
+**提示工程 vs 上下文工程（第 7 章）**
 
 <img src="src/zh/svg/chapter_context_01_comparison.svg" width="480" alt="提示工程 vs 上下文工程">
 
@@ -188,7 +188,7 @@
 <tr>
 <td width="50%" align="center">
 
-**多 Agent 三种通信模式（第 14 章）**
+**多 Agent 三种通信模式（第 15 章）**
 
 <img src="src/zh/svg/chapter_multi_agent_02_communication.svg" width="480" alt="多 Agent 通信模式">
 
@@ -197,7 +197,7 @@
 </td>
 <td width="50%" align="center">
 
-**MCP / A2A / ANP 三协议对比（第 15 章）**
+**MCP / A2A / ANP 三协议对比（第 16 章）**
 
 <img src="src/zh/svg/chapter_protocol_03_three_protocols.svg" width="480" alt="三协议对比">
 
@@ -247,9 +247,9 @@
 | 动画 | 对应章节 | 说明 |
 |------|----------|------|
 | 🔄 **感知-思考-行动循环** | 第 1 章 | 动态演示 Agent 的核心运行循环 |
-| 💡 **ReAct 推理过程** | 第 6 章 | 展示 Thought → Action → Observation 的交替过程 |
-| 🔧 **Function Calling** | 第 4 章 | 工具调用的完整流程动画 |
-| 📚 **RAG 检索流程** | 第 7 章 | 从文档切分到向量检索再到生成回答 |
+| 💡 **ReAct 推理过程** | 第 5 章 | 展示 Thought → Action → Observation 的交替过程 |
+| 🔧 **Function Calling** | 第 3 章 | 工具调用的完整流程动画 |
+| 📚 **RAG 检索流程** | 第 6 章 | 从文档切分到向量检索再到生成回答 |
 | 🎯 **GRPO 采样过程** | 第 10 章 | 组内多输出采样与奖励标准化的可视化 |
 
 > 💡 交互动画仅在 [在线电子书](https://Haozhe-Xing.github.io/agent_learning) 中可体验，本地构建也可预览。
@@ -380,14 +380,14 @@ export OPENAI_API_KEY="your-key-here"
 git clone https://github.com/YOUR_USERNAME/agent_learning.git
 
 # 创建特性分支
-git checkout -b feature/improve-chapter-4
+git checkout -b feature/improve-chapter-3
 
 # 本地预览
 ./serve.sh
 
 # 提交并推送
-git commit -m "feat: 改进第4章工具调用示例代码"
-git push origin feature/improve-chapter-4
+git commit -m "feat: 改进第3章工具调用示例代码"
+git push origin feature/improve-chapter-3
 ```
 
 ### 内容组织约定

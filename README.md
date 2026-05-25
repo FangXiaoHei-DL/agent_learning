@@ -122,7 +122,7 @@
 </td>
 <td width="50%" align="center">
 
-**ReAct Reasoning Framework (Chapter 6)**
+**ReAct Reasoning Framework (Chapter 5)**
 
 <img src="src/en/svg/chapter_planning_02_react_loop.svg" width="420" alt="ReAct Reasoning Framework">
 
@@ -138,7 +138,7 @@
 <tr>
 <td width="50%" align="center">
 
-**Function Calling Complete Flow (Chapter 4)**
+**Function Calling Complete Flow (Chapter 3)**
 
 <img src="src/en/svg/chapter_tools_02_function_calling.svg" width="480" alt="Function Calling Flow">
 
@@ -147,7 +147,7 @@
 </td>
 <td width="50%" align="center">
 
-**RAG Retrieval-Augmented Generation (Chapter 7)**
+**RAG Retrieval-Augmented Generation (Chapter 6)**
 
 <img src="src/en/svg/chapter_rag_01_rag_flow.svg" width="480" alt="RAG Workflow">
 
@@ -163,7 +163,7 @@
 <tr>
 <td width="50%" align="center">
 
-**Three-Layer Memory Architecture (Chapter 5)**
+**Three-Layer Memory Architecture (Chapter 4)**
 
 <img src="src/en/svg/chapter_memory_01_memory_types.svg" width="480" alt="Three-Layer Memory Architecture">
 
@@ -172,7 +172,7 @@
 </td>
 <td width="50%" align="center">
 
-**Prompt Engineering vs Context Engineering (Chapter 8)**
+**Prompt Engineering vs Context Engineering (Chapter 7)**
 
 <img src="src/en/svg/chapter_context_01_comparison.svg" width="480" alt="Prompt Engineering vs Context Engineering">
 
@@ -188,7 +188,7 @@
 <tr>
 <td width="50%" align="center">
 
-**Three Multi-Agent Communication Patterns (Chapter 14)**
+**Three Multi-Agent Communication Patterns (Chapter 15)**
 
 <img src="src/en/svg/chapter_multi_agent_02_communication.svg" width="480" alt="Multi-Agent Communication Patterns">
 
@@ -197,7 +197,7 @@
 </td>
 <td width="50%" align="center">
 
-**MCP / A2A / ANP Protocol Comparison (Chapter 15)**
+**MCP / A2A / ANP Protocol Comparison (Chapter 16)**
 
 <img src="src/en/svg/chapter_protocol_03_three_protocols.svg" width="480" alt="Three Protocol Comparison">
 
@@ -247,9 +247,9 @@ This book includes **5 interactive HTML animations** to help you intuitively und
 | Animation                      | Chapter    | Description                                                                 |
 | ------------------------------ | ---------- | --------------------------------------------------------------------------- |
 | 🔄 **Perceive-Think-Act Cycle** | Chapter 1  | Dynamic demonstration of Agent's core loop                                  |
-| 💡 **ReAct Reasoning Process**  | Chapter 6  | Shows the alternating Thought → Action → Observation process              |
-| 🔧 **Function Calling**         | Chapter 4  | Complete tool invocation flow animation                                     |
-| 📚 **RAG Retrieval Flow**       | Chapter 7  | From document chunking to vector retrieval to answer generation             |
+| 💡 **ReAct Reasoning Process**  | Chapter 5  | Shows the alternating Thought → Action → Observation process              |
+| 🔧 **Function Calling**         | Chapter 3  | Complete tool invocation flow animation                                     |
+| 📚 **RAG Retrieval Flow**       | Chapter 6  | From document chunking to vector retrieval to answer generation             |
 | 🎯 **GRPO Sampling Process**    | Chapter 10 | Visualization of intra-group multi-output sampling and reward normalization |
 
 > 💡 Interactive animations are only available in the [online e-book](https://Haozhe-Xing.github.io/agent_learning). Local builds can also preview them.
@@ -381,14 +381,14 @@ All forms of contribution are welcome!
 git clone https://github.com/YOUR_USERNAME/agent_learning.git
 
 # Create a feature branch
-git checkout -b feature/improve-chapter-4
+git checkout -b feature/improve-chapter-3
 
 # Local preview
 ./serve.sh
 
 # Commit and push
-git commit -m "feat: improve Chapter 4 tool calling code examples"
-git push origin feature/improve-chapter-4
+git commit -m "feat: improve Chapter 3 tool calling code examples"
+git push origin feature/improve-chapter-3
 ```
 
 ### Content Organization Conventions

@@ -1,4 +1,4 @@
-# 15.2 Deep Dive into Core Architecture
+# 14.2 Deep Dive into Core Architecture
 
 > 🏗️ *"The best architectures are the ones where the design decisions are invisible — you only notice them when something goes wrong."*  
 > — From Claude Code source code comments (accidentally leaked in March 2026)
@@ -218,9 +218,9 @@ function ConversationView({ messages }: Props) {
 | **React + Ink** | Renders terminal UI with React components, supports real-time streaming updates |
 | **Parallel tool calls** | A single Think step can execute multiple tools concurrently, improving execution efficiency |
 
-> 💡 **Core insight**: Claude Code's architecture clearly separates "AI intelligence" (QueryEngine) from "reliable execution" (Tool System + permission management) — this is exactly the engineering philosophy of Chapter 9 (Harness Engineering) in practice.
+> 💡 **Core insight**: Claude Code's architecture clearly separates "AI intelligence" (QueryEngine) from "reliable execution" (Tool System + permission management) — this is exactly the engineering philosophy of Chapter 8 (Harness Engineering) in practice.
 
 ---
 
-*Previous section: [15.1 Getting to Know Claude Code: From Zero to Hands-On](./01_introduction.md)*  
-*Next section: [15.3 Source Code Decoded: System Prompt and Permission Engineering](./03_source_code_analysis.md)*
+*Previous section: [14.1 Getting to Know Claude Code: From Zero to Hands-On](./01_introduction.md)*  
+*Next section: [14.3 Source Code Decoded: System Prompt and Permission Engineering](./03_source_code_analysis.md)*

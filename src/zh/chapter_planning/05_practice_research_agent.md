@@ -110,6 +110,8 @@ Sakana AI 等提出的 **The AI Scientist: Towards Fully Automated Open-Ended Sc
 
 ### 论文脉络小结
 
+上面的工作更像是 Auto Research 的“能力地基”：WebGPT 解决浏览与引用，STORM 解决多视角大纲，MindSearch 解决动态搜索图，WebSailor 解决高不确定性 Web 推理，The AI Scientist 解决从研究报告到实验闭环的延伸。真正进入 2025 年之后，前沿焦点进一步从“能不能做研究”转向三个更硬的问题：**能否产品化地完成长程研究任务、能否被高难基准稳定评测、能否用开源模型和开源框架复现闭源 Deep Research 能力**。
+
 | 代表工作 | 研究问题 | 核心机制 | 对 Auto Research 的启发 |
 |----------|----------|----------|--------------------------|
 | **WebGPT** | 如何让模型使用浏览器回答开放域长问题 | 浏览动作建模 + 引用证据 + 人类反馈 | 研究轨迹要可监督、可引用、可评估 |
@@ -118,7 +120,67 @@ Sakana AI 等提出的 **The AI Scientist: Towards Fully Automated Open-Ended Sc
 | **WebSailor** | 如何处理高不确定性、多跳 Web 推理任务 | 复杂任务生成 + 轨迹重构 + 后训练 | 训练 Agent 主动降低不确定性 |
 | **The AI Scientist** | 能否自动完成开放式科学发现流程 | 想法生成 + 文献检索 + 实验 + 写作 + 评审 | Auto Research 可进一步扩展为自动实验系统 |
 
-因此，一个更前沿的 Auto Research Agent 应该不只是"搜索 + 总结"，而是综合这些论文中的思想：像 WebGPT 一样保留证据，像 STORM 一样多视角提问，像 MindSearch 一样维护问题图，像 WebSailor 一样降低不确定性，并在特定领域进一步接近 AI Scientist 式的自动实验闭环。
+### 2025–2026 的前沿进展：从研究原型到 Deep Research 竞赛
+
+如果只介绍上面的论文，确实会显得“不够前沿”。因为 2025 年之后，Auto Research 已经不再只是论文里的研究原型，而是变成了闭源产品、开源框架、专用模型和评测基准共同竞争的方向。
+
+#### OpenAI Deep Research：把长程研究流程产品化
+
+- **官方链接**：[Introducing deep research](https://openai.com/index/introducing-deep-research/)
+- **核心贡献**：2025 年，OpenAI 将 Deep Research 作为面向真实用户的 Agent 能力推出，把“研究计划 → 多轮浏览 → 做笔记 → 证据整合 → 生成带引用报告”包装成可交互的产品流程。
+
+它的重要性不在于提出了某个单点算法，而在于把 Auto Research 从“模型能不能联网搜索”推进到“能否在几十分钟内完成一个人类研究员需要数小时的信息综合任务”。这意味着 Deep Research 的评价标准不再只是回答准确率，还包括报告结构、证据覆盖、引用质量、任务坚持度和不确定性表达。
+
+#### BrowseComp：用“难找但易验证”的问题评测浏览型 Agent
+
+- **项目链接**：[OpenAI simple-evals / BrowseComp](https://github.com/openai/simple-evals)
+- **核心贡献**：2025 年，OpenAI 发布 BrowseComp，用 1266 个高难网页检索问题评估 Agent 在真实 Web 上寻找隐藏信息的能力，问题通常需要跨多个网页、多跳线索和较长浏览轨迹才能回答。
+
+BrowseComp 的价值在于，它把 Web Agent 的评测从“是否能回答简单事实”升级为“是否能在开放互联网中定位难以直接搜索到的信息”。这对 Auto Research 很关键：一个真正的研究 Agent 不能只会读搜索结果首页，而要会在噪声中追踪线索、排除干扰、验证唯一答案。
+
+#### BrowseComp-ZH：中文互联网让 Deep Research 更难
+
+- **论文链接**：[BrowseComp-ZH: Benchmarking Web Browsing Ability of Large Language Models in Chinese](https://arxiv.org/abs/2504.19314)
+- **核心贡献**：2025 年，BrowseComp-ZH 将高难浏览评测扩展到中文互联网，强调中文语境下的信息碎片化、平台分散、表达省略、搜索入口差异和多跳线索问题。
+
+这项工作提醒我们：Deep Research 不是把英文 Web Agent 平移到中文就可以解决。中文互联网有大量信息分布在百科、新闻、论坛、政务网站、社交平台和视频平台中，关键词常常不直接命中答案。因此，中文 Auto Research Agent 需要更强的查询改写、实体消歧、跨平台检索和来源可信度判断能力。
+
+#### Open Deep Research：开源框架开始复现 Deep Research 工作流
+
+- **项目链接**：[LangChain Open Deep Research](https://github.com/langchain-ai/open_deep_research)
+- **核心贡献**：LangChain 的 Open Deep Research 把 Deep Research 的工程模式开源化，用 `LangGraph` 等组件实现研究计划、搜索、内容读取、报告生成和人工反馈调整，让开发者可以复现和定制研究 Agent 流程。
+
+它的意义在于推动 Deep Research 从闭源能力走向可组合工程框架。对开发者来说，重点不只是“调用哪个模型”，而是如何设计状态机、如何管理中间笔记、如何控制并发搜索、如何把用户反馈反馈到报告计划中。
+
+#### Tongyi DeepResearch：开源专用 Deep Research 模型与系统
+
+- **项目链接**：[Alibaba-NLP DeepResearch](https://github.com/Alibaba-NLP/DeepResearch)
+- **模型链接**：[Tongyi-DeepResearch-30B-A3B](https://huggingface.co/Alibaba-NLP/Tongyi-DeepResearch-30B-A3B)
+- **核心贡献**：2025 年，通义 DeepResearch 将 Deep Research 从“通用模型 + Agent 框架”推进到“面向长周期深度信息搜索任务训练的专用开源模型与系统”，并围绕数据生成、持续训练、强化学习、推理和评估形成完整工程栈。
+
+这代表了一个重要趋势：未来的 Deep Research 可能不会完全依赖通用对话模型加 Prompt，而会出现专门为搜索轨迹、证据整合、长程推理和报告生成优化的 Agent 模型。
+
+#### DeepResearch Bench / BrowseComp-Plus：评测从单题答案走向端到端报告质量
+
+- **项目示例**：[BrowseComp-Plus](https://github.com/texttron/BrowseComp-Plus)
+- **核心贡献**：2026 年前后，评测开始从“给出一个可验证答案”扩展到“评估完整研究报告”。新的评测更关注全面性、洞察力、指令遵循、可读性、引用质量和端到端研究流程表现。
+
+这说明 Auto Research 的前沿评测正在分化成两类：一类像 BrowseComp，考察 Agent 是否能找到隐藏事实；另一类像 DeepResearch Bench，考察 Agent 是否能产出高质量研究报告。前者更像“搜索推理能力测试”，后者更像“研究员工作质量测试”。
+
+### 前沿脉络小结
+
+| 阶段 | 代表进展 | 关注问题 | 前沿意义 |
+|------|----------|----------|----------|
+| **早期浏览问答** | **WebGPT** | 模型如何浏览网页并引用来源 | 让搜索轨迹和证据引用变成可学习对象 |
+| **检索增强写作** | **STORM** | 如何为开放主题生成高覆盖大纲 | 把研究写作前移到问题空间探索 |
+| **深度搜索图** | **MindSearch** | 如何动态拆解和扩展复杂搜索 | 让研究计划从静态列表变成问题图 |
+| **高不确定性 Web 推理** | **WebSailor** | 如何训练 Agent 解决极难多跳检索 | 后训练开始面向搜索轨迹和不确定性消除 |
+| **产品化 Deep Research** | **OpenAI Deep Research** | 如何让用户真正完成长程研究任务 | Deep Research 成为通用知识工作入口 |
+| **高难浏览评测** | **BrowseComp / BrowseComp-ZH** | 如何评测真实 Web 上的深度检索能力 | 逼迫 Agent 处理多跳、噪声和跨语言 Web 环境 |
+| **开源复现与专用模型** | **Open Deep Research / Tongyi DeepResearch** | 如何复现闭源 Deep Research 能力 | 从 Prompt 工程走向框架化、模型化和训练化 |
+| **端到端研究评测** | **DeepResearch Bench / BrowseComp-Plus** | 如何评估完整报告质量 | 评测从答案准确率走向研究质量 |
+
+因此，一个更前沿的 Auto Research Agent 不应只停留在“搜索 + 总结”。它需要综合这些进展：像 WebGPT 一样保留证据，像 STORM 一样多视角提问，像 MindSearch 一样维护问题图，像 WebSailor 一样主动降低不确定性，像 OpenAI Deep Research 一样产品化长程流程，像 BrowseComp/BrowseComp-ZH 一样接受高难检索评测，并进一步吸收 Open Deep Research 和 Tongyi DeepResearch 的工程化、开源化和训练化经验。
 
 ## Auto Research 的典型工作流
 
@@ -447,6 +509,12 @@ python research_agent.py
 4. Li et al. [**WebSailor: Navigating Super-human Reasoning for Web Agent**](https://arxiv.org/abs/2507.02592). Alibaba Tongyi Lab, 2025.
 5. Lu et al. [**The AI Scientist: Towards Fully Automated Open-Ended Scientific Discovery**](https://arxiv.org/abs/2408.06292). Sakana AI, 2024.
 6. OpenAI. [**Introducing Deep Research**](https://openai.com/index/introducing-deep-research/). 2025.
+7. OpenAI. [**BrowseComp in simple-evals**](https://github.com/openai/simple-evals). 2025.
+8. Li et al. [**BrowseComp-ZH: Benchmarking Web Browsing Ability of Large Language Models in Chinese**](https://arxiv.org/abs/2504.19314). 2025.
+9. LangChain AI. [**Open Deep Research**](https://github.com/langchain-ai/open_deep_research). 2025.
+10. Alibaba-NLP. [**Tongyi DeepResearch**](https://github.com/Alibaba-NLP/DeepResearch). 2025.
+11. Alibaba-NLP. [**Tongyi-DeepResearch-30B-A3B**](https://huggingface.co/Alibaba-NLP/Tongyi-DeepResearch-30B-A3B). 2025.
+12. Texttron. [**BrowseComp-Plus: A More Fair and Transparent Evaluation Benchmark of Deep-Research Agent**](https://github.com/texttron/BrowseComp-Plus). 2026.
 
 ## 小结
 
